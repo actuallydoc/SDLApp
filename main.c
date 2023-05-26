@@ -24,6 +24,75 @@ struct {
 const int WIDTH = 1200;
 const int HEIGHT = 800;
 
+// Step in pixels for moving the rectangles
+const int STEP = 10;
+
+int moveRectToDown(SDL_Rect *rect, SDL_Renderer *renderer,
+                   SDL_Texture *texture) {
+  if (rect->y < 0) {
+    return 1;
+  }
+  SDL_RenderClear(renderer);
+  rect->y = rect->y + STEP;
+  SDL_RenderCopy(renderer, texture, NULL, rect);
+  printf("New after changing Rect x is: %i\n", rect->x);
+  SDL_RenderPresent(renderer);
+  return 1;
+}
+
+int moveRectToUp(SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *texture) {
+  if (rect->y > 700 || rect->y < 0) {
+    return 1;
+  }
+  SDL_RenderClear(renderer);
+  rect->y = rect->y - STEP;
+  SDL_RenderCopy(renderer, texture, NULL, rect);
+  printf("New after changing Rect x is: %i\n", rect->x);
+  SDL_RenderPresent(renderer);
+  return 1;
+}
+
+int moveRectToLeft(SDL_Rect *rect, SDL_Renderer *renderer,
+                   SDL_Texture *texture) {
+  if (rect->x < 0 || rect->x > 950) {
+    printf("Rect x is smaller than 0 and bigger than 950\n");
+    return 0;
+  }
+  SDL_RenderClear(renderer);
+  rect->x = rect->x - STEP;
+  SDL_RenderCopy(renderer, texture, NULL, rect);
+  printf("New after changing Rect x is: %i\n", rect->x);
+  SDL_RenderPresent(renderer);
+  return 1;
+}
+// This jjust renders the new rect tho?
+int moveRectToRight(SDL_Rect *rect, SDL_Renderer *renderer,
+                    SDL_Texture *texture) {
+
+  if (rect->x < 0 || rect->x > 950) {
+    return 0;
+  }
+  SDL_RenderClear(renderer);
+  rect->x = rect->x + STEP;
+  SDL_RenderCopy(renderer, texture, NULL, rect);
+  printf("New after changing Rect x is: %i\n", rect->x);
+  SDL_RenderPresent(renderer);
+  return 1;
+}
+
+int changeTextColor(SDL_Rect rect, SDL_Renderer *renderer, SDL_Color color,
+                    TTF_Font *font) {
+  SDL_Surface *textObject = TTF_RenderText_Solid(font, "Hello World", color);
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, textObject);
+  if (texture == NULL) {
+    printf("SDL texture creation error: %s\n", SDL_GetError());
+    return 0;
+  }
+  SDL_FreeSurface(textObject);
+  SDL_RenderCopy(renderer, texture, NULL, &rect);
+  SDL_RenderPresent(renderer);
+  return 1;
+}
 int main(int argc, char *argv[]) {
   SDL_Init(SDL_INIT_EVERYTHING);
   TTF_Init();
@@ -73,16 +142,41 @@ int main(int argc, char *argv[]) {
       case SDL_MOUSEBUTTONDOWN:
         break;
       case SDL_KEYDOWN:
-        if (event.key.keysym.sym == 98) {
+        printf("key: %i", event.key.keysym.sym);
+        switch (event.key.keysym.sym) {
+        case 100:
+          // SDL_Color new_color = {10, 150, 20, 255};
+          // if (changeTextColor(rect, renderer, new_color, font)) {
+          //   printf("Success\n");
+          // };
+          if (moveRectToRight(&rect, renderer, texture)) {
+            printf("Succecs moving it to right \n");
+          }
+          break;
+
+        case 97:
+          if (moveRectToLeft(&rect, renderer, texture)) {
+            printf("Success moving it to left \n");
+          };
+          break;
+        case 119:
+          if (moveRectToUp(&rect, renderer, texture)) {
+            printf("Success moving it up\n");
+          }
           // char *clipboard = SDL_GetClipboardText();
           // printf(clipboard);
           // SDL_free(clipboard);
-          int cpuCount = SDL_GetCPUCount();
-          printf("Cpu count: %i\n", cpuCount);
-          int memorySize = SDL_GetSystemRAM();
-          printf("Memory Size: %i\n", memorySize);
+          // int cpuCount = SDL_GetCPUCount();
+          // printf("Cpu count: %i\n", cpuCount);
+          // int memorySize = SDL_GetSystemRAM();
+          // printf("Memory Size: %i\n", memorySize);
           fflush(stdout);
           break;
+
+        case 115:
+          if (moveRectToDown(&rect, renderer, texture)) {
+            printf("Success moving it down\n");
+          }
         }
       }
     }
