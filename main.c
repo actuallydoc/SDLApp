@@ -65,7 +65,7 @@ int moveRectToLeft(SDL_Rect *rect, SDL_Renderer *renderer,
   SDL_RenderPresent(renderer);
   return 1;
 }
-// This jjust renders the new rect tho?
+// This just renders the new rect tho?
 int moveRectToRight(SDL_Rect *rect, SDL_Renderer *renderer,
                     SDL_Texture *texture) {
 
